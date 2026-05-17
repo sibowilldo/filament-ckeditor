@@ -191,6 +191,16 @@
                                         attributes: {
                                             download: 'file'
                                         }
+                                    },
+
+                                    openInNewTab: {
+                                        mode: 'manual',
+                                        label: 'Open in a new tab',
+                                        defaultValue: true, // Optional
+                                        attributes: {
+                                            target: '_blank',
+                                            rel: 'noopener noreferrer'
+                                        }
                                     }
                                 }
                             },
@@ -277,6 +287,11 @@
                             // Find the main ckeditor class and add some helpful class names to it
 
                             document.getElementsByClassName('ck-editor__main')[0].classList.add('prose', 'max-w-none', 'dark:prose-invert')
+
+                            editor.editing.view.change(writer => {
+                                writer.setStyle('min-height', '300px', editor.editing.view.document.getRoot());
+                            });
+
 
                             // Listen to changes (only if not disabled)
                             @if(!$isDisabled)
