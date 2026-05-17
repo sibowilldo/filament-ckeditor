@@ -5,6 +5,9 @@
     $isConcealed = $isConcealed();
     $statePath = $getStatePath();
     $isDisabled = $isDisabled();
+    $toolbarItems = $getToolbarItems();
+    $headingOptions = $getHeadingOptions();
+    $menuBarVisible = $getMenuBarVisible();
     // Create a safe identifier from statePath for use in JavaScript
     $editorId = str_replace(['.', '[', ']'], ['-', '-', ''], $statePath);
 @endphp
@@ -108,7 +111,7 @@
                                 @if($uploadUrl)
 
                                     SimpleUploadAdapter,
-                                
+
                                 @endif
 
                                 SourceEditing,
@@ -135,46 +138,7 @@
                                 Undo
                             ],
                             toolbar: {
-                                items: [
-                                    'undo',
-                                    'redo',
-                                    '|',
-                                    'sourceEditing',
-                                    'showBlocks',
-                                    '|',
-                                    'heading',
-                                    'style',
-                                    '|',
-                                    'fontSize',
-                                    'fontFamily',
-                                    'fontColor',
-                                    'fontBackgroundColor',
-                                    '|',
-                                    'bold',
-                                    'italic',
-                                    'underline',
-                                    '|',
-                                    'link',
-                                    
-                                    @if($uploadUrl)
-
-                                        'insertImage',
-                                    
-                                    @endif
-                                    
-                                    'insertTable',
-                                    'highlight',
-                                    'blockQuote',
-                                    'codeBlock',
-                                    '|',
-                                    'alignment',
-                                    '|',
-                                    'bulletedList',
-                                    'numberedList',
-                                    'todoList',
-                                    'outdent',
-                                    'indent'
-                                ],
+                                items: @json($toolbarItems),
                                 shouldNotGroupWhenFull: false
                             },
                             fontFamily: {
@@ -185,49 +149,7 @@
                                 supportAllValues: true
                             },
                             heading: {
-                                options: [
-                                    {
-                                        model: 'paragraph',
-                                        title: 'Paragraph',
-                                        class: 'ck-heading_paragraph'
-                                    },
-                                    {
-                                        model: 'heading1',
-                                        view: 'h1',
-                                        title: 'Heading 1',
-                                        class: 'ck-heading_heading1'
-                                    },
-                                    {
-                                        model: 'heading2',
-                                        view: 'h2',
-                                        title: 'Heading 2',
-                                        class: 'ck-heading_heading2'
-                                    },
-                                    {
-                                        model: 'heading3',
-                                        view: 'h3',
-                                        title: 'Heading 3',
-                                        class: 'ck-heading_heading3'
-                                    },
-                                    {
-                                        model: 'heading4',
-                                        view: 'h4',
-                                        title: 'Heading 4',
-                                        class: 'ck-heading_heading4'
-                                    },
-                                    {
-                                        model: 'heading5',
-                                        view: 'h5',
-                                        title: 'Heading 5',
-                                        class: 'ck-heading_heading5'
-                                    },
-                                    {
-                                        model: 'heading6',
-                                        view: 'h6',
-                                        title: 'Heading 6',
-                                        class: 'ck-heading_heading6'
-                                    }
-                                ]
+                                options: @json($headingOptions)
                             },
                             htmlSupport: {
                                 allow: [
@@ -280,7 +202,7 @@
                                 }
                             },
                             menuBar: {
-                                isVisible: true
+                                isVisible: @json($menuBarVisible)
                             },
                             placeholder: '{{ $placeholder }}',
                             style: {
@@ -373,7 +295,7 @@
                                 editor.enableReadOnlyMode('{{ $editorId }}');
 
                             @endif
-                            
+
                         })
                         .catch(err => {
                             console.error(err);
@@ -401,10 +323,10 @@
                     state: $wire.$entangle('{{ $getStatePath() }}'),
                     init() {
                         const instance = window.ckeditorInstances['ckeditor-{{ $editorId }}'];
-                        
+
                         // Create handler with Alpine component context
                         instance.createHandler = () => createCKEditor('{{ $editorId }}', '{{ $statePath }}', this);
-                        
+
                         // Remove existing event listeners to prevent duplicates
                         if (instance.createHandler) {
                             document.removeEventListener('livewire:navigated', instance.createHandler);
